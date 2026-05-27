@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Are you fit enough to review agent's code?</title>
+    <link rel="stylesheet" href="/vendor/prism/prism-tomorrow.min.css">
+    <style>
+        body {
+            max-width: 1100px;
+            margin: 4rem auto;
+            padding: 0 1rem;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.5;
+        }
+
+        h1 {
+            margin-bottom: 1.5rem;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        ul {
+            padding-left: 1.25rem;
+            margin-top: 0;
+        }
+
+        li {
+            margin: 0.35rem 0;
+        }
+
+        button {
+            border: 0;
+            background: none;
+            padding: 0;
+            color: #2563eb;
+            cursor: pointer;
+            font: inherit;
+            text-align: left;
+        }
+
+        button:hover,
+        button:focus {
+            text-decoration: underline;
+        }
+
+        .viewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .viewer-title {
+            font-weight: 700;
+        }
+
+        pre[class*="language-"] {
+            border-radius: 0.5rem;
+            margin: 0;
+            min-height: 400px;
+            white-space: pre-wrap;
+        }
+
+        @media (max-width: 800px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Are you fit enough to review agent's code</h1>
+
+    <main>
+        <nav aria-label="JavaScript examples">
+            <ul id="file-list"></ul>
+        </nav>
+
+        <section aria-live="polite">
+            <div class="viewer-header">
+                <div class="viewer-title" id="viewer-title">Select a file</div>
+                <a id="raw-link" href="#" hidden>Open raw file</a>
+            </div>
+
+            <pre><code id="code-viewer" class="language-js">// Pick a JavaScript file from the list.</code></pre>
+        </section>
+    </main>
+
+    <script src="/vendor/prism/prism.min.js"></script>
+    <script src="/vendor/prism/prism-javascript.min.js"></script>
+    <script>
+        const files = [
+            "one.js",
+            "two.js",
+            "three.js",
+            "four.js",
+            "five.js",
+            "six.js",
+            "seven.js",
+            "eight.js",
+            "nine.js",
+            "ten.js",
+            "eleven.js",
+            "twelve.js",
+            "thirteen.js",
+            "fourteen.js",
+            "fifteen-twentytwo.js"
+        ];
+
+        const fileList = document.getElementById("file-list");
+        const viewerTitle = document.getElementById("viewer-title");
+        const codeViewer = document.getElementById("code-viewer");
+        const rawLink = document.getElementById("raw-link");
+
+        for (const file of files) {
+            const item = document.createElement("li");
+            const button = document.createElement("button");
+
+            button.type = "button";
+            button.textContent = file;
+            button.addEventListener("click", () => loadFile(file));
+
+            item.appendChild(button);
+            fileList.appendChild(item);
+        }
+
+        async function loadFile(file) {
+            const path = `/docs/${file}`;
+            const response = await fetch(path);
+
+            if (!response.ok) {
+                viewerTitle.textContent = "Error";
+                codeViewer.textContent = `Could not load ${file}`;
+                rawLink.hidden = true;
+                Prism.highlightElement(codeViewer);
+                return;
+            }
+
+            viewerTitle.textContent = file;
+            rawLink.href = path;
+            rawLink.hidden = false;
+            codeViewer.textContent = await response.text();
+            Prism.highlightElement(codeViewer);
+        }
+
+        loadFile(files[0]);
+    </script>
+</body>
+</html>
